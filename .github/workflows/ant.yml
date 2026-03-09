@@ -25,17 +25,12 @@ jobs:
       run: |
         wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.115/bin/apache-tomcat-9.0.115.tar.gz  
         tar -xzf apache-tomcat-9.0.115.tar.gz
-
-
-    - name: Download NetBeans CopyLibs
-      run: |
-        wget https://repo1.maven.org/maven2/org/netbeans/modules/org-netbeans-modules-java-j2seproject-copylibstask/RELEASE113/org-netbeans-modules-java-j2seproject-copylibstask-RELEASE113.jar
         
     - name: Build with Ant
       run: |
         cd prj301-demo
         ant \ 
-        -Dlibs.CopyLibs.classpath=../org-netbeans-modules-java-j2seproject-copylibstask-RELEASE113.jar \
+        -Dlibs.CopyLibs.classpath=prj301-demo\lib\org-netbeans-modules-java-j2seproject-copylibstask.jar \
         -Dj2ee.server.home=../apache-tomcat-9.0.115 \
         -noinput \
         -buildfile build.xml

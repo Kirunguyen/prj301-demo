@@ -12,6 +12,7 @@
 
 # Package Files #
 *.jar
+!prj301-demo/lib/org-netbeans-modules-java-j2seproject-copylibstask.jar
 *.war
 *.nar
 *.ear
