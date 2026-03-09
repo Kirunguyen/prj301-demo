@@ -29,11 +29,7 @@ jobs:
     - name: Build with Ant
       run: |
         cd prj301-demo
-        ant \ 
-        -Dlibs.CopyLibs.classpath=prj301-demo\lib\org-netbeans-modules-java-j2seproject-copylibstask.jar \
-        -Dj2ee.server.home=../apache-tomcat-9.0.115 \
-        -noinput \
-        -buildfile build.xml
+        ant -Dlibs.CopyLibs.classpath=lib/org-netbeans-modules-java-j2seproject-copylibstask.jar -Dj2ee.server.home=../apache-tomcat-9.0.115 -noinput clean dist
 
     - name: Upload WAR artifact
       uses: actions/upload-artifact@v4
