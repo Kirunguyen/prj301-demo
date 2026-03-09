@@ -21,10 +21,15 @@ jobs:
       with:
         java-version: '8'
         distribution: 'temurin'
+    - name: Download Tomcat
+      run: |
+        wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.115/bin/apache-tomcat-9.0.115.tar.gz  
+        tar -xzf apache-tomcat-9.0.115.tar.gz
+
     - name: Build with Ant
       run: |
         cd prj301-demo
-        ant -noinput -buildfile build.xml
+        ant -Dj2ee.server.home=../apache-tomcat-9.0.115 -noinput -buildfile build.xml
 
     - name: Upload WAR artifact
       uses: actions/upload-artifact@v4
