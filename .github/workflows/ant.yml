@@ -22,7 +22,9 @@ jobs:
         java-version: '8'
         distribution: 'temurin'
     - name: Build with Ant
-      run: ant -noinput -buildfile build.xml
+      run: |
+        cd prj301-demo
+        ant -noinput -buildfile build.xml
 
     - name: Upload WAR artifact
       uses: actions/upload-artifact@v4
