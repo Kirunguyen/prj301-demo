@@ -23,6 +23,13 @@ jobs:
         java-version: '8'
         distribution: 'temurin'
 
+    - name: Cache Tomcat
+      id: cache-tomcat
+      uses: actions/cache@v4
+      with:
+        path: apache-tomcat-9.0.115
+        key: ${{ runner.os }}-tomcat-9.0.115
+
     - name: Cache Ant packages
       uses: actions/cache@v4
       with: 
@@ -30,6 +37,7 @@ jobs:
         key: ant-${{ runner.os }}
         
     - name: Download Tomcat
+      if: steps.cache-tomcat.outputs.cache-hit != 'true'
       run: |
         wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.115/bin/apache-tomcat-9.0.115.tar.gz  
         tar -xzf apache-tomcat-9.0.115.tar.gz
