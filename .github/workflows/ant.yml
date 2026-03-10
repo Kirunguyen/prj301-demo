@@ -36,6 +36,7 @@ jobs:
         
     - name: Build with Ant
       run: |
+        set -euxo pipefail
         cd prj301-demo
         ant -Dlibs.CopyLibs.classpath=lib/org-netbeans-modules-java-j2seproject-copylibstask.jar -Dj2ee.server.home=../apache-tomcat-9.0.115 -noinput clean dist
 
