@@ -48,6 +48,30 @@ jobs:
         cd prj301-demo
         ant -Dlibs.CopyLibs.classpath=lib/org-netbeans-modules-java-j2seproject-copylibstask.jar -Dj2ee.server.home=../apache-tomcat-9.0.115 -noinput clean dist
 
+    - name: Start Tomcat
+      run: |
+        ./apache-tomcat-9.0.115/bin/startup.sh
+
+    - name: Wait for Tomcat
+      run: |
+        for i in {1..30}; do
+          if curl -s http://localhost:8080 > /dev/null; then
+            echo "Tomcat is up!"
+            break
+          fi
+          echo "Waiting for Tomcat..."
+          sleep 2
+        done
+
+    - name: Deploy WAR to Tomcat
+      run: |
+        cp prj301-demo/dist/*.war apache-tomcat-9.0.115/webapps/
+        sleep 10
+
+    - name: Test deployment
+      run: |
+        curl -f http://localhost:8080/prj301-demo/
+
     - name: Upload WAR artifact
       uses: actions/upload-artifact@v4
       with:
