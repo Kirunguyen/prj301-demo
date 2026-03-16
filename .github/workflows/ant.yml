@@ -5,76 +5,76 @@ name: Build WAR (Ant + Tomcat)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["**"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up JDK 8
-      uses: actions/setup-java@v4
-      with:
-        java-version: '8'
-        distribution: 'temurin'
+      - uses: actions/checkout@v4
 
-    - name: Cache Tomcat
-      id: cache-tomcat
-      uses: actions/cache@v4
-      with:
-        path: apache-tomcat-9.0.115
-        key: ${{ runner.os }}-tomcat-9.0.115
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: "8"
+          distribution: "temurin"
 
-    - name: Cache Ant packages
-      uses: actions/cache@v4
-      with: 
-        path: ~/.ant
-        key: ant-${{ runner.os }}
-        
-    - name: Download Tomcat
-      if: steps.cache-tomcat.outputs.cache-hit != 'true'
-      run: |
-        wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.115/bin/apache-tomcat-9.0.115.tar.gz  
-        tar -xzf apache-tomcat-9.0.115.tar.gz
-        
-    - name: Build with Ant
-      run: |
-        set -euxo pipefail
-        cd prj301-demo
-        ant -Dlibs.CopyLibs.classpath=lib/org-netbeans-modules-java-j2seproject-copylibstask.jar -Dj2ee.server.home=../apache-tomcat-9.0.115 -noinput clean dist
+      - name: Cache Tomcat
+        id: cache-tomcat
+        uses: actions/cache@v4
+        with:
+          path: apache-tomcat-9.0.115
+          key: ${{ runner.os }}-tomcat-9.0.115
 
-    - name: Start Tomcat
-      run: |
-        ./apache-tomcat-9.0.115/bin/startup.sh
+      - name: Cache Ant packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.ant
+          key: ant-${{ runner.os }}
 
-    - name: Wait for Tomcat
-      run: |
-        for i in {1..30}; do
-          if curl -s http://localhost:8080 > /dev/null; then
-            echo "Tomcat is up!"
-            break
-          fi
-          echo "Waiting for Tomcat..."
-          sleep 2
-        done
+      - name: Download Tomcat
+        if: steps.cache-tomcat.outputs.cache-hit != 'true'
+        run: |
+          wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.115/bin/apache-tomcat-9.0.115.tar.gz  
+          tar -xzf apache-tomcat-9.0.115.tar.gz
 
-    - name: Deploy WAR to Tomcat
-      run: |
-        cp prj301-demo/dist/*.war apache-tomcat-9.0.115/webapps/
-        sleep 10
+      - name: Build with Ant
+        run: |
+          set -euxo pipefail
+          cd prj301-demo
+          ant -Dlibs.CopyLibs.classpath=lib/org-netbeans-modules-java-j2seproject-copylibstask.jar -Dj2ee.server.home=../apache-tomcat-9.0.115 -noinput clean dist
 
-    - name: Test deployment
-      run: |
-        curl -f http://localhost:8080/prj301-demo/
+      - name: Start Tomcat
+        run: |
+          ./apache-tomcat-9.0.115/bin/startup.sh
 
-    - name: Upload WAR artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: prj301-demo-war
-        path: prj301-demo/dist/*.war
-        retention-days: 7
+      - name: Wait for Tomcat
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:8080 > /dev/null; then
+              echo "Tomcat is up!"
+              break
+            fi
+            echo "Waiting for Tomcat..."
+            sleep 2
+          done
+
+      - name: Deploy WAR to Tomcat
+        run: |
+          cp prj301-demo/dist/*.war apache-tomcat-9.0.115/webapps/
+          sleep 10
+
+      - name: Test deployment
+        run: |
+          curl -f http://localhost:8080/prj301-demo/
+
+      - name: Upload WAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: prj301-demo-war
+          path: prj301-demo/dist/*.war
+          retention-days: 7
+
